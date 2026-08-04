@@ -7,7 +7,7 @@
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
         
-        <!-- ESTILOS LEAFLET Y PLUGINS QGIS2WEB -->
+        <!-- ESTILOS LEAFLET Y PLUGINS -->
         <link rel="stylesheet" href="css/leaflet.css">
         <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
         <link rel="stylesheet" href="css/L.Control.Locate.min.css">
@@ -17,10 +17,6 @@
         <link rel="stylesheet" href="css/leaflet.photon.css">
         <link rel="stylesheet" href="css/leaflet-measure.css">
 
-        <!-- LIBRERÍA MARKERCLUSTER PARA RENDIMIENTO CON ALTAS VOLUMETRÍAS DE PUNTOS -->
-        <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
-        <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
-
         <style>
         html, body, #map {
             width: 100%;
@@ -29,7 +25,24 @@
             margin: 0;
         }
 
-        /* Estilos explícitos para la leyenda personalizada */
+        /* CORRECCIÓN VISUAL CONTROLES IZQUIERDA */
+        .leaflet-control-measure {
+            background: #fff !important;
+            border-radius: 4px !important;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.4) !important;
+        }
+        .leaflet-control-measure a.leaflet-control-measure-toggle {
+            text-indent: -9999px !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            width: 30px !important;
+            height: 30px !important;
+            background-position: center !important;
+            background-repeat: no-repeat !important;
+            display: block !important;
+        }
+
+        /* SIMBOLOGÍA LEYENDA */
         .dot-autorizados {
             height: 12px;
             width: 12px;
@@ -63,7 +76,7 @@
     </head>
     <body>
 
-        <!-- ENCABEZADO Y LOGO INSTITUCIONAL -->
+        <!-- ENCABEZADO Y LOGO -->
         <div id="custom-title" style="
             position: absolute;
             top: 12px;
@@ -99,10 +112,13 @@
 
         <div id="map"></div>
 
-        <!-- SCRIPTS BASE LEAFLET Y QGIS2WEB -->
+        <!-- LIBRERÍAS JS BASE -->
         <script src="js/qgis2web_expressions.js"></script>
         <script src="js/leaflet.js"></script>
-        <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
+        <!-- LIBRERÍA OFICIAL PMTILES PARA LEAFLET -->
+        <script src="https://unpkg.com/pmtiles@2.13.0/dist/index.js"></script>
+
         <script src="js/L.Control.Layers.Tree.min.js"></script>
         <script src="js/L.Control.Locate.min.js"></script>
         <script src="js/leaflet.rotatedMarker.js"></script>
@@ -116,11 +132,10 @@
         <script src="js/leaflet-measure.js"></script>
         <script src="js/leaflet-search.js"></script>
         
-        <!-- CARGA DE DATOS LOCALES JS -->
+        <!-- DATOS JSON RESTANTES -->
         <script src="data/Riesgovolcamientoycadaderamas_2.js"></script>
         <script src="data/Parquespriorizados_3.js"></script>
         <script src="data/Redvialpriorizada_4.js"></script>
-        <script src="data/neatogeo_Capas_optimizadas.js"></script>
         <script src="data/rbolesautorizadospreventiva_6.js"></script>
         <script src="data/Lmiteurbano_7.js"></script>
 
@@ -130,7 +145,7 @@
         }).fitBounds([[4.459562594150919,-74.365277374599],[4.83971214808472,-73.87036569117575]]);
 
         var hash = new L.Hash(map);
-        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com">Leaflet</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
         
         function removeEmptyRowsFromPopupContent(content, feature) {
@@ -147,8 +162,9 @@
             return tempDiv.innerHTML;
         }
 
+        // CONTROLES IZQUIERDOS
         var zoomControl = L.control.zoom({ position: 'topleft' }).addTo(map);
-        L.control.locate({locateOptions: {maxZoom: 19}}).addTo(map);
+        L.control.locate({locateOptions: {maxZoom: 19}, position: 'topleft'}).addTo(map);
         
         var measureControl = new L.Control.Measure({
             position: 'topleft',
@@ -186,7 +202,7 @@
         }
         map.createPane('pane_Riesgovolcamientoycadaderamas_2');
         map.getPane('pane_Riesgovolcamientoycadaderamas_2').style.zIndex = 402;
-        var layer_Riesgovolcamientoycadaderamas_2 = new L.geoJson(json_Riesgovolcamientoycadaderamas_2, {
+        var layer_Riesgovolcamientoycadaderamas_2 = new L.geoJson(typeof json_Riesgovolcamientoycadaderamas_2 !== 'undefined' ? json_Riesgovolcamientoycadaderamas_2 : null, {
             pane: 'pane_Riesgovolcamientoycadaderamas_2', style: style_Riesgovolcamientoycadaderamas_2_0
         });
         map.addLayer(layer_Riesgovolcamientoycadaderamas_2);
@@ -203,7 +219,7 @@
         }
         map.createPane('pane_Parquespriorizados_3');
         map.getPane('pane_Parquespriorizados_3').style.zIndex = 403;
-        var layer_Parquespriorizados_3 = new L.geoJson(json_Parquespriorizados_3, {
+        var layer_Parquespriorizados_3 = new L.geoJson(typeof json_Parquespriorizados_3 !== 'undefined' ? json_Parquespriorizados_3 : null, {
             pane: 'pane_Parquespriorizados_3', style: style_Parquespriorizados_3_0
         });
         map.addLayer(layer_Parquespriorizados_3);
@@ -220,26 +236,21 @@
         }
         map.createPane('pane_Redvialpriorizada_4');
         map.getPane('pane_Redvialpriorizada_4').style.zIndex = 404;
-        var layer_Redvialpriorizada_4 = new L.geoJson(json_Redvialpriorizada_4, {
+        var layer_Redvialpriorizada_4 = new L.geoJson(typeof json_Redvialpriorizada_4 !== 'undefined' ? json_Redvialpriorizada_4 : null, {
             pane: 'pane_Redvialpriorizada_4', style: style_Redvialpriorizada_4_0
         });
         map.addLayer(layer_Redvialpriorizada_4);
 
-        // 1. ÁRBOLES EVALUADOS PREVENTIVA (CLUSTER OPTIMIZADO DE ALTO RENDIMIENTO)
-        map.createPane('pane_neatogeo_Capas_optimizadas_5');
-        map.getPane('pane_neatogeo_Capas_optimizadas_5').style.zIndex = 405;
+        // 1. CARGA CORRECTA DE ÁRBOLES EVALUADOS DESDE ARCHIVO .PMTILES
+        map.createPane('pane_evaluados_pmtiles');
+        map.getPane('pane_evaluados_pmtiles').style.zIndex = 405;
 
-        var layer_neatogeo_Capas_optimizadas_5 = L.markerClusterGroup({
-            chunkedLoading: true,        // Carga por lotes progresivos para no pausar el mapa
-            disableClusteringAtZoom: 16, // A partir del zoom 16 se abren como puntos individuales
-            maxClusterRadius: 45,        // Agrupación ágil
-            spiderfyOnMaxZoom: true,
-            showCoverageOnHover: false
-        });
-
-        var raw_evaluados = L.geoJson(json_neatogeo_Capas_optimizadas, {
-            pane: 'pane_neatogeo_Capas_optimizadas_5',
-            pointToLayer: function (feature, latlng) {
+        // Inicializador PMTiles
+        var p = new pmtiles.PMTiles("data/neatogeo_Capas_optimizadas.pmtiles");
+        
+        var layer_neatogeo_Capas_optimizadas_5 = pmtiles.leafletLayer(p, {
+            pane: 'pane_evaluados_pmtiles',
+            pointToLayer: function(feature, latlng) {
                 return L.circleMarker(latlng, {
                     radius: 3.5,
                     fillColor: '#33cc33',
@@ -250,16 +261,14 @@
                 });
             }
         });
-
-        layer_neatogeo_Capas_optimizadas_5.addLayer(raw_evaluados);
         map.addLayer(layer_neatogeo_Capas_optimizadas_5);
 
-        // 2. ÁRBOLES AUTORIZADOS PREVENTIVA (PUNTOS AMARILLOS CON POPUP)
-        function pop_rbolesautorizadospreventiva_6(feature, layer) {
+        // 2. ÁRBOLES AUTORIZADOS PREVENTIVA (GEOJSON LOCAL)
+        function pop_autorizados(feature, layer) {
             var popupContent = '<table>\
-                    <tr><th scope="row">COD_SIGAU</th><td>' + (feature.properties['COD_SIGAU'] || '') + '</td></tr>\
-                    <tr><th scope="row">ESPECIE</th><td>' + (feature.properties['ESPECIE'] || '') + '</td></tr>\
-                    <tr><th scope="row">CAT_EVALUA</th><td>' + (feature.properties['CAT_EVALUA'] || '') + '</td></tr>\
+                    <tr><th scope="row">COD_SIGAU</th><td>' + (feature.properties['COD_SIGAU'] || feature.properties['cod_sigau'] || 'S/D') + '</td></tr>\
+                    <tr><th scope="row">ESPECIE</th><td>' + (feature.properties['ESPECIE'] || feature.properties['especie'] || 'S/D') + '</td></tr>\
+                    <tr><th scope="row">EVALUACIÓN</th><td>' + (feature.properties['CAT_EVALUA'] || feature.properties['cat_evalua'] || 'S/D') + '</td></tr>\
                 </table>';
             layer.bindPopup(removeEmptyRowsFromPopupContent(popupContent, feature), { maxHeight: 400 });
         }
@@ -267,9 +276,9 @@
         map.createPane('pane_rbolesautorizadospreventiva_6');
         map.getPane('pane_rbolesautorizadospreventiva_6').style.zIndex = 406;
         
-        var layer_rbolesautorizadospreventiva_6 = new L.geoJson(json_rbolesautorizadospreventiva_6, {
+        var layer_rbolesautorizadospreventiva_6 = new L.geoJson(typeof json_rbolesautorizadospreventiva_6 !== 'undefined' ? json_rbolesautorizadospreventiva_6 : null, {
             pane: 'pane_rbolesautorizadospreventiva_6',
-            onEachFeature: pop_rbolesautorizadospreventiva_6,
+            onEachFeature: pop_autorizados,
             pointToLayer: function (feature, latlng) {
                 return L.circleMarker(latlng, {
                     radius: 4.5,
@@ -286,12 +295,12 @@
         // LÍMITE URBANO
         map.createPane('pane_Lmiteurbano_7');
         map.getPane('pane_Lmiteurbano_7').style.zIndex = 407;
-        var layer_Lmiteurbano_7 = new L.geoJson(json_Lmiteurbano_7, {
+        var layer_Lmiteurbano_7 = new L.geoJson(typeof json_Lmiteurbano_7 !== 'undefined' ? json_Lmiteurbano_7 : null, {
             pane: 'pane_Lmiteurbano_7', interactive: false, style: { opacity: 1, color: 'rgba(0,0,0,1.0)', weight: 2.0, fillOpacity: 0 }
         });
         map.addLayer(layer_Lmiteurbano_7);
 
-        // ESTRUCTURA DEL CONTROL DE CAPAS (LEYENDA PLANA Y LIMPIA)
+        // CONTROL DE CAPAS Y LEYENDA (DERECHA)
         var overlaysTree = [
             { label: '<img src="legend/Lmiteurbano_7.png" style="width:12px; height:12px;"/> Límite urbano', layer: layer_Lmiteurbano_7 },
             { label: '<span class="dot-autorizados"></span> Árboles autorizados preventiva', layer: layer_rbolesautorizadospreventiva_6 },
@@ -336,16 +345,27 @@
         var lay = L.control.layers.tree(null, overlaysTree, { collapsed: false });
         lay.addTo(map);
 
-        // BUSCADOR SIGAU
-        map.addControl(new L.Control.Search({
+        // 1. BUSCADOR POR CÓDIGO SIGAU
+        var searchControl = new L.Control.Search({
             layer: layer_rbolesautorizadospreventiva_6,
+            propertyName: 'COD_SIGAU',
             initial: false,
+            zoom: 18,
             hideMarkerOnCollapse: true,
-            propertyName: 'COD_SIGAU'
-        }));
+            textPlaceholder: 'Buscar por COD_SIGAU...'
+        });
+        map.addControl(searchControl);
+
+        // 2. BUSCADOR POR DIRECCIÓN EN BOGOTÁ (PHOTON)
+        var photonControl = L.control.photon({
+            placeholder: 'Buscar dirección o lugar...',
+            url: 'https://photon.komoot.io/api/?',
+            bbox: [-74.3, 4.4, -73.8, 4.9]
+        });
+        photonControl.addTo(map);
 
         if (document.getElementsByClassName('search-button')[0]) {
-            document.getElementsByClassName('search-button')[0].className += ' fa fa-binoculars';
+            document.getElementsByClassName('search-button')[0].className += ' fa fa-search';
         }
         </script>
     </body>
