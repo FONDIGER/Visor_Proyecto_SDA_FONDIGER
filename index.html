@@ -7,7 +7,7 @@
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
         
-        <!-- ESTILOS LEAFLET Y PLUGINS -->
+        <!-- ESTILOS LEAFLET Y PLUGINS QGIS2WEB -->
         <link rel="stylesheet" href="css/leaflet.css">
         <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
         <link rel="stylesheet" href="css/L.Control.Locate.min.css">
@@ -17,8 +17,9 @@
         <link rel="stylesheet" href="css/leaflet.photon.css">
         <link rel="stylesheet" href="css/leaflet-measure.css">
 
-        <!-- LIBRERÍA OFICIAL DE PMTILES V3 PARA LEAFLET -->
-        <script src="https://unpkg.com/pmtiles@3.0.6/dist/pmtiles.js"></script>
+        <!-- LIBRERÍA MARKERCLUSTER PARA RENDIMIENTO CON ALTAS VOLUMETRÍAS DE PUNTOS -->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
 
         <style>
         html, body, #map {
@@ -28,7 +29,7 @@
             margin: 0;
         }
 
-        /* Estilos explícitos para los círculos de la leyenda */
+        /* Estilos explícitos para la leyenda personalizada */
         .dot-autorizados {
             height: 12px;
             width: 12px;
@@ -62,7 +63,7 @@
     </head>
     <body>
 
-        <!-- ENCABEZADO Y LOGO -->
+        <!-- ENCABEZADO Y LOGO INSTITUCIONAL -->
         <div id="custom-title" style="
             position: absolute;
             top: 12px;
@@ -101,6 +102,7 @@
         <!-- SCRIPTS BASE LEAFLET Y QGIS2WEB -->
         <script src="js/qgis2web_expressions.js"></script>
         <script src="js/leaflet.js"></script>
+        <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
         <script src="js/L.Control.Layers.Tree.min.js"></script>
         <script src="js/L.Control.Locate.min.js"></script>
         <script src="js/leaflet.rotatedMarker.js"></script>
@@ -114,10 +116,11 @@
         <script src="js/leaflet-measure.js"></script>
         <script src="js/leaflet-search.js"></script>
         
-        <!-- DATOS LOCALES GEOJSON -->
+        <!-- CARGA DE DATOS LOCALES JS -->
         <script src="data/Riesgovolcamientoycadaderamas_2.js"></script>
         <script src="data/Parquespriorizados_3.js"></script>
         <script src="data/Redvialpriorizada_4.js"></script>
+        <script src="data/neatogeo_Capas_optimizadas.js"></script>
         <script src="data/rbolesautorizadospreventiva_6.js"></script>
         <script src="data/Lmiteurbano_7.js"></script>
 
@@ -222,33 +225,36 @@
         });
         map.addLayer(layer_Redvialpriorizada_4);
 
-        // 1. ÁRBOLES EVALUADOS PREVENTIVA (DESDE ARCHIVO .PMTILES)
+        // 1. ÁRBOLES EVALUADOS PREVENTIVA (CLUSTER OPTIMIZADO DE ALTO RENDIMIENTO)
         map.createPane('pane_neatogeo_Capas_optimizadas_5');
         map.getPane('pane_neatogeo_Capas_optimizadas_5').style.zIndex = 405;
 
-        // Registrar el protocolo pmtiles
-        let p = new pmtiles.PMTiles("data/neatogeo_Capas_optimizadas.pmtiles");
-        
-        // Crear la capa usando TileLayer para PMTiles
-        var layer_neatogeo_Capas_optimizadas_5 = L.tileLayer('pmtiles://data/neatogeo_Capas_optimizadas.pmtiles/{z}/{x}/{y}', {
-            pane: 'pane_neatogeo_Capas_optimizadas_5',
-            minZoom: 10,
-            maxZoom: 22
+        var layer_neatogeo_Capas_optimizadas_5 = L.markerClusterGroup({
+            chunkedLoading: true,        // Carga por lotes progresivos para no pausar el mapa
+            disableClusteringAtZoom: 16, // A partir del zoom 16 se abren como puntos individuales
+            maxClusterRadius: 45,        // Agrupación ágil
+            spiderfyOnMaxZoom: true,
+            showCoverageOnHover: false
         });
-        
-        // Asignar el protocolo de pmtiles a Leaflet
-        let pmtilesProtocol = new pmtiles.Protocol();
-        L.TileLayer.addInitHook(function() {
-            if (this.url && this.url.startsWith('pmtiles://')) {
-                pmtilesProtocol.tile(this.url).then(t => {
-                    this._url = t;
+
+        var raw_evaluados = L.geoJson(json_neatogeo_Capas_optimizadas, {
+            pane: 'pane_neatogeo_Capas_optimizadas_5',
+            pointToLayer: function (feature, latlng) {
+                return L.circleMarker(latlng, {
+                    radius: 3.5,
+                    fillColor: '#33cc33',
+                    color: '#1e7b1e',
+                    weight: 1,
+                    opacity: 1,
+                    fillOpacity: 0.9
                 });
             }
         });
 
+        layer_neatogeo_Capas_optimizadas_5.addLayer(raw_evaluados);
         map.addLayer(layer_neatogeo_Capas_optimizadas_5);
 
-        // 2. ÁRBOLES AUTORIZADOS PREVENTIVA (PUNTOS AMARILLOS)
+        // 2. ÁRBOLES AUTORIZADOS PREVENTIVA (PUNTOS AMARILLOS CON POPUP)
         function pop_rbolesautorizadospreventiva_6(feature, layer) {
             var popupContent = '<table>\
                     <tr><th scope="row">COD_SIGAU</th><td>' + (feature.properties['COD_SIGAU'] || '') + '</td></tr>\
@@ -285,11 +291,11 @@
         });
         map.addLayer(layer_Lmiteurbano_7);
 
-        // CONTROL DE CAPAS Y LEYENDA (ESTRUCTURA LIMPIA SIN SUBNIVELES EN AUTORIZADOS)
+        // ESTRUCTURA DEL CONTROL DE CAPAS (LEYENDA PLANA Y LIMPIA)
         var overlaysTree = [
             { label: '<img src="legend/Lmiteurbano_7.png" style="width:12px; height:12px;"/> Límite urbano', layer: layer_Lmiteurbano_7 },
             { label: '<span class="dot-autorizados"></span> Árboles autorizados preventiva', layer: layer_rbolesautorizadospreventiva_6 },
-            { label: '<span class="dot-evaluados"></span> Árboles evaluados preventiva (PMTiles)', layer: layer_neatogeo_Capas_optimizadas_5 },
+            { label: '<span class="dot-evaluados"></span> Árboles evaluados preventiva', layer: layer_neatogeo_Capas_optimizadas_5 },
             { 
                 label: 'Red vial priorizada', 
                 layer: layer_Redvialpriorizada_4,
