@@ -1,11 +1,13 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
+        
+        <!-- ESTILOS LEAFLET Y PLUGINS -->
         <link rel="stylesheet" href="css/leaflet.css">
         <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
         <link rel="stylesheet" href="css/L.Control.Locate.min.css">
@@ -14,6 +16,10 @@
         <link rel="stylesheet" href="css/leaflet-search.css">
         <link rel="stylesheet" href="css/leaflet.photon.css">
         <link rel="stylesheet" href="css/leaflet-measure.css">
+
+        <!-- LIBRERÍA PROTOMAPS PARA LEER ARBOLES EVALUADOS (PMTILES) -->
+        <script src="https://unpkg.com/pmtiles@2.11.0/dist/index.js"></script>
+
         <style>
         html, body, #map {
             width: 100%;
@@ -21,26 +27,27 @@
             padding: 0;
             margin: 0;
         }
+
         /* Estilos explícitos para forzar los círculos amarillo y verde en la leyenda */
         .dot-autorizados {
-            height: 11px;
-            width: 11px;
+            height: 12px;
+            width: 12px;
             background-color: #ffff00;
             border-radius: 50%;
             display: inline-block;
-            border: 1.2px solid #333300;
+            border: 1px solid #333300;
             vertical-align: middle;
-            margin-right: 5px;
+            margin-right: 6px;
         }
         .dot-evaluados {
-            height: 11px;
-            width: 11px;
+            height: 12px;
+            width: 12px;
             background-color: #33cc33;
             border-radius: 50%;
             display: inline-block;
-            border: 1.2px solid #1e7b1e;
+            border: 1px solid #1e7b1e;
             vertical-align: middle;
-            margin-right: 5px;
+            margin-right: 6px;
         }
         .legend-square {
             display: inline-block;
@@ -55,42 +62,43 @@
     </head>
     <body>
 
-<!-- ENCABEZADO Y LOGO -->
-<div id="custom-title" style="
-    position: absolute;
-    top: 12px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1000;
-    background: rgba(255, 255, 255, 0.92);
-    padding: 8px 22px;
-    border-radius: 20px;
-    box-shadow: 0px 2px 8px rgba(0,0,0,0.25);
-    font-family: Arial, Helvetica, sans-serif;
-    text-align: center;
-    pointer-events: auto;">
-    <h1 style="margin: 0; font-size: 16px; font-weight: bold; color: #1a252f;">
-        Visor del Proyecto de Gestión del Riesgo del arbolado. SDA - FONDIGER
-    </h1>
-</div>
-
-<div id="custom-logo" style="
-    position: absolute;
-    bottom: 20px;
-    left: 15px;
-    z-index: 1000;
-    background: rgba(255, 255, 255, 0.88);
-    padding: 6px 12px;
-    border-radius: 8px;
-    box-shadow: 0px 2px 6px rgba(0,0,0,0.2);
-    display: flex;
-    align-items: center;
-    pointer-events: auto;">
-    <img src="images/logo.PNG" alt="Logo" style="height: 45px; width: auto; display: block;">
-</div>
-
-        <div id="map">
+        <!-- ENCABEZADO Y LOGO -->
+        <div id="custom-title" style="
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.92);
+            padding: 8px 22px;
+            border-radius: 20px;
+            box-shadow: 0px 2px 8px rgba(0,0,0,0.25);
+            font-family: Arial, Helvetica, sans-serif;
+            text-align: center;
+            pointer-events: auto;">
+            <h1 style="margin: 0; font-size: 16px; font-weight: bold; color: #1a252f;">
+                Visor del Proyecto de Gestión del Riesgo del arbolado. SDA - FONDIGER
+            </h1>
         </div>
+
+        <div id="custom-logo" style="
+            position: absolute;
+            bottom: 20px;
+            left: 15px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.88);
+            padding: 6px 12px;
+            border-radius: 8px;
+            box-shadow: 0px 2px 6px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            pointer-events: auto;">
+            <img src="images/logo.PNG" alt="Logo" style="height: 45px; width: auto; display: block;">
+        </div>
+
+        <div id="map"></div>
+
+        <!-- SCRIPTS BASE LEAFLET Y QGIS2WEB -->
         <script src="js/qgis2web_expressions.js"></script>
         <script src="js/leaflet.js"></script>
         <script src="js/L.Control.Layers.Tree.min.js"></script>
@@ -106,11 +114,10 @@
         <script src="js/leaflet-measure.js"></script>
         <script src="js/leaflet-search.js"></script>
         
-        <!-- Archivos GeoJSON en formato .js -->
+        <!-- DATOS LOCALES GEOJSON -->
         <script src="data/Riesgovolcamientoycadaderamas_2.js"></script>
         <script src="data/Parquespriorizados_3.js"></script>
         <script src="data/Redvialpriorizada_4.js"></script>
-        <script src="data/neatogeo_Capas_optimizadas.js"></script>
         <script src="data/rbolesautorizadospreventiva_6.js"></script>
         <script src="data/Lmiteurbano_7.js"></script>
 
@@ -163,7 +170,7 @@
         });
         map.addLayer(layer_Imagensatelital_1);
 
-        // RIESGO VOLCAMIENTO
+        // CAPAS VECTORIALES DE RIESGO
         function style_Riesgovolcamientoycadaderamas_2_0(feature) {
             switch(String(feature.properties['CATRIES_UN'])) {
                 case 'Muy alto': return { pane: 'pane_Riesgovolcamientoycadaderamas_2', opacity: 1, color: 'rgba(35,35,35,0)', weight: 1, fill: true, fillOpacity: 0.8, fillColor: 'rgba(227,26,28,1.0)' };
@@ -181,7 +188,6 @@
         });
         map.addLayer(layer_Riesgovolcamientoycadaderamas_2);
 
-        // PARQUES PRIORIZADOS
         function style_Parquespriorizados_3_0(feature) {
             switch(String(feature.properties['RIESGO_UNI'])) {
                 case 'Muy alto': return { pane: 'pane_Parquespriorizados_3', opacity: 1, color: 'rgba(35,35,35,0)', weight: 1, fill: true, fillOpacity: 0.8, fillColor: 'rgba(227,26,28,1.0)' };
@@ -199,7 +205,6 @@
         });
         map.addLayer(layer_Parquespriorizados_3);
 
-        // RED VIAL PRIORIZADA
         function style_Redvialpriorizada_4_0(feature) {
             switch(String(feature.properties['CATRIES_UN'])) {
                 case 'Muy alto': return { pane: 'pane_Redvialpriorizada_4', opacity: 1, color: 'rgba(227,26,28,1.0)', weight: 3 };
@@ -217,31 +222,46 @@
         });
         map.addLayer(layer_Redvialpriorizada_4);
 
-        // ÁRBOLES EVALUADOS PREVENTIVA (PUNTOS VERDES)
+        // 1. ÁRBOLES EVALUADOS PREVENTIVA (CONFIGURACIÓN NATIVA DE PMTILES)
         map.createPane('pane_neatogeo_Capas_optimizadas_5');
         map.getPane('pane_neatogeo_Capas_optimizadas_5').style.zIndex = 405;
-        
-        var layer_neatogeo_Capas_optimizadas_5 = new L.geoJson(json_neatogeo_Capas_optimizadas, {
+
+        var protocol = new pmtiles.Protocol();
+        L.TileLayer.addInitHook(function () {
+            this._pmtilesProtocol = protocol;
+        });
+
+        // Apunta al archivo PMTiles dentro de la carpeta data
+        var p = new pmtiles.PMTiles("data/neatogeo_Capas_optimizadas.pmtiles");
+        protocol.add(p);
+
+        var layer_neatogeo_Capas_optimizadas_5 = pmtiles.leafletVectorLayer(p, {
             pane: 'pane_neatogeo_Capas_optimizadas_5',
-            pointToLayer: function (feature, latlng) {
-                return L.circleMarker(latlng, {
-                    radius: 4.0,
-                    fillColor: '#33cc33',
-                    color: '#1e7b1e',
-                    weight: 1,
-                    opacity: 1,
-                    fillOpacity: 0.95
-                });
+            style: {
+                color: '#1e7b1e',
+                fillColor: '#33cc33',
+                fillOpacity: 0.95,
+                radius: 4.0
             }
         });
         map.addLayer(layer_neatogeo_Capas_optimizadas_5);
 
-        // ÁRBOLES AUTORIZADOS PREVENTIVA (PUNTOS AMARILLOS)
+        // 2. ÁRBOLES AUTORIZADOS PREVENTIVA (PUNTOS AMARILLOS)
+        function pop_rbolesautorizadospreventiva_6(feature, layer) {
+            var popupContent = '<table>\
+                    <tr><th scope="row">COD_SIGAU</th><td>' + (feature.properties['COD_SIGAU'] || '') + '</td></tr>\
+                    <tr><th scope="row">ESPECIE</th><td>' + (feature.properties['ESPECIE'] || '') + '</td></tr>\
+                    <tr><th scope="row">CAT_EVALUA</th><td>' + (feature.properties['CAT_EVALUA'] || '') + '</td></tr>\
+                </table>';
+            layer.bindPopup(removeEmptyRowsFromPopupContent(popupContent, feature), { maxHeight: 400 });
+        }
+
         map.createPane('pane_rbolesautorizadospreventiva_6');
         map.getPane('pane_rbolesautorizadospreventiva_6').style.zIndex = 406;
         
         var layer_rbolesautorizadospreventiva_6 = new L.geoJson(json_rbolesautorizadospreventiva_6, {
             pane: 'pane_rbolesautorizadospreventiva_6',
+            onEachFeature: pop_rbolesautorizadospreventiva_6,
             pointToLayer: function (feature, latlng) {
                 return L.circleMarker(latlng, {
                     radius: 4.5,
@@ -263,11 +283,11 @@
         });
         map.addLayer(layer_Lmiteurbano_7);
 
-        // LEYENDA CONTROL DE CAPAS
+        // CONTROL DE CAPAS Y LEYENDA
         var overlaysTree = [
             { label: '<img src="legend/Lmiteurbano_7.png" style="width:12px; height:12px;"/> Límite urbano', layer: layer_Lmiteurbano_7 },
-            { label: '<span class="dot-autorizados"></span> <b>Árboles autorizados preventiva</b>', layer: layer_rbolesautorizadospreventiva_6 },
-            { label: '<span class="dot-evaluados"></span> <b>Árboles evaluados preventiva</b>', layer: layer_neatogeo_Capas_optimizadas_5 },
+            { label: '<span class="dot-autorizados"></span> Árboles autorizados preventiva', layer: layer_rbolesautorizadospreventiva_6 },
+            { label: '<span class="dot-evaluados"></span> Árboles evaluados preventiva', layer: layer_neatogeo_Capas_optimizadas_5 },
             { 
                 label: 'Red vial priorizada', 
                 layer: layer_Redvialpriorizada_4,
@@ -308,7 +328,7 @@
         var lay = L.control.layers.tree(null, overlaysTree, { collapsed: false });
         lay.addTo(map);
 
-        // BUSCADOR SIGAU
+        // BUSCADOR SIGAU SOBRE AUTORIZADOS
         map.addControl(new L.Control.Search({
             layer: layer_rbolesautorizadospreventiva_6,
             initial: false,
