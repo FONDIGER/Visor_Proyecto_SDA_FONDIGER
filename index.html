@@ -17,8 +17,8 @@
         <link rel="stylesheet" href="css/leaflet.photon.css">
         <link rel="stylesheet" href="css/leaflet-measure.css">
 
-        <!-- LIBRERÍA PROTOMAPS PARA LEER ARBOLES EVALUADOS (PMTILES) -->
-        <script src="https://unpkg.com/pmtiles@2.11.0/dist/index.js"></script>
+        <!-- LIBRERÍA OFICIAL DE PMTILES V3 PARA LEAFLET -->
+        <script src="https://unpkg.com/pmtiles@3.0.6/dist/pmtiles.js"></script>
 
         <style>
         html, body, #map {
@@ -28,7 +28,7 @@
             margin: 0;
         }
 
-        /* Estilos explícitos para forzar los círculos amarillo y verde en la leyenda */
+        /* Estilos explícitos para los círculos de la leyenda */
         .dot-autorizados {
             height: 12px;
             width: 12px;
@@ -192,7 +192,7 @@
             switch(String(feature.properties['RIESGO_UNI'])) {
                 case 'Muy alto': return { pane: 'pane_Parquespriorizados_3', opacity: 1, color: 'rgba(35,35,35,0)', weight: 1, fill: true, fillOpacity: 0.8, fillColor: 'rgba(227,26,28,1.0)' };
                 case 'Alto': return { pane: 'pane_Parquespriorizados_3', opacity: 1, color: 'rgba(35,35,35,0)', weight: 1, fill: true, fillOpacity: 0.8, fillColor: 'rgba(255,127,0,1.0)' };
-                case 'Medio': return { pane: 'pane_Parquespriorizados_3', opacity: 1, color: 'rgba(35,35,35,0)', weight: 1, fill: true, fillOpacity: 0.8, fillColor: 'rgba(239,237,94,1.0)' };
+                case 'Medio': return { pane: 'pane_Parquespriorizados_3', opacity: 1, color: 'rgba(239,237,94,1.0)', weight: 1, fill: true, fillOpacity: 0.8, fillColor: 'rgba(239,237,94,1.0)' };
                 case 'Bajo': return { pane: 'pane_Parquespriorizados_3', opacity: 1, color: 'rgba(35,35,35,0)', weight: 1, fill: true, fillOpacity: 0.8, fillColor: 'rgba(178,223,138,1.0)' };
                 case 'Muy bajo': return { pane: 'pane_Parquespriorizados_3', opacity: 1, color: 'rgba(35,35,35,0)', weight: 1, fill: true, fillOpacity: 0.8, fillColor: 'rgba(51,160,44,1.0)' };
                 default: return { pane: 'pane_Parquespriorizados_3', opacity: 1, color: 'rgba(35,35,35,0)', weight: 1, fill: true, fillOpacity: 0.8, fillColor: 'rgba(222,231,92,1.0)' };
@@ -222,28 +222,30 @@
         });
         map.addLayer(layer_Redvialpriorizada_4);
 
-        // 1. ÁRBOLES EVALUADOS PREVENTIVA (CONFIGURACIÓN NATIVA DE PMTILES)
+        // 1. ÁRBOLES EVALUADOS PREVENTIVA (DESDE ARCHIVO .PMTILES)
         map.createPane('pane_neatogeo_Capas_optimizadas_5');
         map.getPane('pane_neatogeo_Capas_optimizadas_5').style.zIndex = 405;
 
-        var protocol = new pmtiles.Protocol();
-        L.TileLayer.addInitHook(function () {
-            this._pmtilesProtocol = protocol;
-        });
-
-        // Apunta al archivo PMTiles dentro de la carpeta data
-        var p = new pmtiles.PMTiles("data/neatogeo_Capas_optimizadas.pmtiles");
-        protocol.add(p);
-
-        var layer_neatogeo_Capas_optimizadas_5 = pmtiles.leafletVectorLayer(p, {
+        // Registrar el protocolo pmtiles
+        let p = new pmtiles.PMTiles("data/neatogeo_Capas_optimizadas.pmtiles");
+        
+        // Crear la capa usando TileLayer para PMTiles
+        var layer_neatogeo_Capas_optimizadas_5 = L.tileLayer('pmtiles://data/neatogeo_Capas_optimizadas.pmtiles/{z}/{x}/{y}', {
             pane: 'pane_neatogeo_Capas_optimizadas_5',
-            style: {
-                color: '#1e7b1e',
-                fillColor: '#33cc33',
-                fillOpacity: 0.95,
-                radius: 4.0
+            minZoom: 10,
+            maxZoom: 22
+        });
+        
+        // Asignar el protocolo de pmtiles a Leaflet
+        let pmtilesProtocol = new pmtiles.Protocol();
+        L.TileLayer.addInitHook(function() {
+            if (this.url && this.url.startsWith('pmtiles://')) {
+                pmtilesProtocol.tile(this.url).then(t => {
+                    this._url = t;
+                });
             }
         });
+
         map.addLayer(layer_neatogeo_Capas_optimizadas_5);
 
         // 2. ÁRBOLES AUTORIZADOS PREVENTIVA (PUNTOS AMARILLOS)
@@ -283,11 +285,11 @@
         });
         map.addLayer(layer_Lmiteurbano_7);
 
-        // CONTROL DE CAPAS Y LEYENDA
+        // CONTROL DE CAPAS Y LEYENDA (ESTRUCTURA LIMPIA SIN SUBNIVELES EN AUTORIZADOS)
         var overlaysTree = [
             { label: '<img src="legend/Lmiteurbano_7.png" style="width:12px; height:12px;"/> Límite urbano', layer: layer_Lmiteurbano_7 },
             { label: '<span class="dot-autorizados"></span> Árboles autorizados preventiva', layer: layer_rbolesautorizadospreventiva_6 },
-            { label: '<span class="dot-evaluados"></span> Árboles evaluados preventiva', layer: layer_neatogeo_Capas_optimizadas_5 },
+            { label: '<span class="dot-evaluados"></span> Árboles evaluados preventiva (PMTiles)', layer: layer_neatogeo_Capas_optimizadas_5 },
             { 
                 label: 'Red vial priorizada', 
                 layer: layer_Redvialpriorizada_4,
@@ -328,7 +330,7 @@
         var lay = L.control.layers.tree(null, overlaysTree, { collapsed: false });
         lay.addTo(map);
 
-        // BUSCADOR SIGAU SOBRE AUTORIZADOS
+        // BUSCADOR SIGAU
         map.addControl(new L.Control.Search({
             layer: layer_rbolesautorizadospreventiva_6,
             initial: false,
