@@ -870,6 +870,7 @@ var capaPMTiles = protomapsL.leafletLayer({
         search.insertBefore(button, search.firstChild);
         last = search.lastChild;
         last.style.display = "none";
+        
         button.addEventListener("click", function (e) {
             if (last.style.display === "none") {
                 last.style.display = "block";
