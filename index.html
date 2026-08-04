@@ -86,7 +86,7 @@
         <script src="data/Riesgovolcamientoycadaderamas_2.js"></script>
         <script src="data/Parquespriorizados_3.js"></script>
         <script src="data/Redvialpriorizada_4.js"></script>
-        <script src="data/rbolesevaluadospreventiva_5.js"></script>
+       <!-- <script src="data/rbolesevaluadospreventiva_5.js"></script>-->
         <script src="data/rbolesautorizadospreventiva_6.js"></script>
         <script src="data/Lmiteurbano_7.js"></script>
 <!-- Librería para soporte de PMTiles -->
@@ -613,7 +613,7 @@ var capaPMTiles = protomapsL.leafletLayer({
         });
         bounds_group.addLayer(layer_Redvialpriorizada_4);
         map.addLayer(layer_Redvialpriorizada_4);
-        function pop_rbolesevaluadospreventiva_5(feature, layer) {
+        <!--function pop_rbolesevaluadospreventiva_5(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
                         <th scope="row">COD_SIGAU</th>\
@@ -688,13 +688,13 @@ var capaPMTiles = protomapsL.leafletLayer({
                 };
                 return L.circleMarker(latlng, style_rbolesevaluadospreventiva_5_0(feature));
             },
-        });
-        var cluster_rbolesevaluadospreventiva_5 = new L.MarkerClusterGroup({showCoverageOnHover: false,
+        });-->
+       <!-- var cluster_rbolesevaluadospreventiva_5 = new L.MarkerClusterGroup({showCoverageOnHover: false,
             spiderfyDistanceMultiplier: 2});
         cluster_rbolesevaluadospreventiva_5.addLayer(layer_rbolesevaluadospreventiva_5);
 
         bounds_group.addLayer(layer_rbolesevaluadospreventiva_5);
-        cluster_rbolesevaluadospreventiva_5.addTo(map);
+        cluster_rbolesevaluadospreventiva_5.addTo(map);-->
         function pop_rbolesautorizadospreventiva_6(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
@@ -880,7 +880,8 @@ var capaPMTiles = protomapsL.leafletLayer({
         var overlaysTree = [
             {label: '<img src="legend/Lmiteurbano_7.png" /> Límite urbano', layer: layer_Lmiteurbano_7},
             {label: '<img src="legend/rbolesautorizadospreventiva_6.png" /> Árboles autorizados preventiva', layer: cluster_rbolesautorizadospreventiva_6},
-            {label: '<img src="legend/rbolesevaluadospreventiva_5.png" /> Árboles evaluados preventiva', layer: cluster_rbolesevaluadospreventiva_5},
+{label: 'Árboles Evaluados preventiva', layer: capaPMTiles},
+            <!-- {label: '<img src="legend/rbolesevaluadospreventiva_5.png" /> Árboles evaluados preventiva', layer: cluster_rbolesevaluadospreventiva_5},-->
             {label: 'Red vial priorizada<br /><table><tr><td style="text-align: center;"><img src="legend/Redvialpriorizada_4_Muyalto0.png" /></td><td>Muy alto</td></tr><tr><td style="text-align: center;"><img src="legend/Redvialpriorizada_4_Alto1.png" /></td><td>Alto</td></tr><tr><td style="text-align: center;"><img src="legend/Redvialpriorizada_4_Medio2.png" /></td><td>Medio</td></tr><tr><td style="text-align: center;"><img src="legend/Redvialpriorizada_4_Bajo3.png" /></td><td>Bajo</td></tr><tr><td style="text-align: center;"><img src="legend/Redvialpriorizada_4_Muybajo4.png" /></td><td>Muy bajo</td></tr><tr><td style="text-align: center;"><img src="legend/Redvialpriorizada_4_5.png" /></td><td></td></tr></table>', layer: layer_Redvialpriorizada_4},
             {label: 'Parques priorizados<br /><table><tr><td style="text-align: center;"><img src="legend/Parquespriorizados_3_Muyalto0.png" /></td><td>Muy alto</td></tr><tr><td style="text-align: center;"><img src="legend/Parquespriorizados_3_Alto1.png" /></td><td>Alto</td></tr><tr><td style="text-align: center;"><img src="legend/Parquespriorizados_3_Medio2.png" /></td><td>Medio</td></tr><tr><td style="text-align: center;"><img src="legend/Parquespriorizados_3_Bajo3.png" /></td><td>Bajo</td></tr><tr><td style="text-align: center;"><img src="legend/Parquespriorizados_3_Muybajo4.png" /></td><td>Muy bajo</td></tr><tr><td style="text-align: center;"><img src="legend/Parquespriorizados_3_5.png" /></td><td></td></tr></table>', layer: layer_Parquespriorizados_3},
             {label: 'Riesgo volcamiento y caÍda de ramas<br /><table><tr><td style="text-align: center;"><img src="legend/Riesgovolcamientoycadaderamas_2_Muyalto0.png" /></td><td>Muy alto</td></tr><tr><td style="text-align: center;"><img src="legend/Riesgovolcamientoycadaderamas_2_Alto1.png" /></td><td>Alto</td></tr><tr><td style="text-align: center;"><img src="legend/Riesgovolcamientoycadaderamas_2_Medio2.png" /></td><td>Medio</td></tr><tr><td style="text-align: center;"><img src="legend/Riesgovolcamientoycadaderamas_2_Bajo3.png" /></td><td>Bajo</td></tr><tr><td style="text-align: center;"><img src="legend/Riesgovolcamientoycadaderamas_2_Muybajo4.png" /></td><td>Muy bajo</td></tr><tr><td style="text-align: center;"><img src="legend/Riesgovolcamientoycadaderamas_2_5.png" /></td><td></td></tr></table>', layer: layer_Riesgovolcamientoycadaderamas_2},
