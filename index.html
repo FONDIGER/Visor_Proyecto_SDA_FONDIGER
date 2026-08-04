@@ -21,11 +21,11 @@
             padding: 0;
             margin: 0;
         }
-        .legend-key {
+        .legend-circle {
             display: inline-block;
             width: 10px;
             height: 10px;
-            margin-right: 5px;
+            margin-right: 6px;
             border-radius: 50%;
             vertical-align: middle;
             border: 1px solid #333;
@@ -34,7 +34,7 @@
             display: inline-block;
             width: 12px;
             height: 12px;
-            margin-right: 5px;
+            margin-right: 6px;
             border-radius: 2px;
             vertical-align: middle;
         }
@@ -43,7 +43,7 @@
     </head>
     <body>
 
-<!-- BLOQUE PERSONALIZADO: TÍTULO SUPERIOR Y LOGO INFERIOR -->
+<!-- ENCABEZADO Y LOGO -->
 <div id="custom-title" style="
     position: absolute;
     top: 12px;
@@ -93,13 +93,16 @@
         <script src="js/leaflet.photon.js"></script>
         <script src="js/leaflet-measure.js"></script>
         <script src="js/leaflet-search.js"></script>
+        
+        <!-- CAPAS VECTORIALES JS -->
         <script src="data/Riesgovolcamientoycadaderamas_2.js"></script>
         <script src="data/Parquespriorizados_3.js"></script>
         <script src="data/Redvialpriorizada_4.js"></script>
-        <script src="data/rbolesautorizadospreventiva_6.js"></script>
+        <script src="data/neatogeo_Capas_optimizadas.js"></script> <!-- Árboles Evaluados -->
+        <script src="data/rbolesautorizadospreventiva_6.js"></script> <!-- Árboles Autorizados -->
         <script src="data/Lmiteurbano_7.js"></script>
         
-        <!-- Librerías para PMTiles con Protomaps -->
+        <!-- SOPORTE ADICIONAL PMTILES POR SI USAS SERVIDOR LOCAL -->
         <script src="https://unpkg.com/pmtiles@2.10.0/dist/index.js"></script>
         <script src="https://unpkg.com/protomaps-leaflet@v3.1.0/dist/protomaps-leaflet.js"></script>
         
@@ -142,45 +145,17 @@
         map.createPane('pane_OpenStreetMap_0');
         map.getPane('pane_OpenStreetMap_0').style.zIndex = 400;
         var layer_OpenStreetMap_0 = L.tileLayer('http://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            pane: 'pane_OpenStreetMap_0',
-            opacity: 1.0,
-            attribution: '© OpenStreetMap contributors',
-            minZoom: 1, maxZoom: 28
+            pane: 'pane_OpenStreetMap_0', opacity: 1.0, minZoom: 1, maxZoom: 28
         });
 
         map.createPane('pane_Imagensatelital_1');
         map.getPane('pane_Imagensatelital_1').style.zIndex = 401;
         var layer_Imagensatelital_1 = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-            pane: 'pane_Imagensatelital_1',
-            opacity: 1.0,
-            attribution: 'Map data ©2026 Google',
-            minZoom: 1, maxZoom: 28
+            pane: 'pane_Imagensatelital_1', opacity: 1.0, minZoom: 1, maxZoom: 28
         });
         map.addLayer(layer_Imagensatelital_1);
 
-        // 1. CAPA PMTILES: ÁRBOLES EVALUADOS (Con renderizado explícito de puntos)
-        map.createPane('pane_PMTiles_Evaluados');
-        map.getPane('pane_PMTiles_Evaluados').style.zIndex = 405;
-        
-        var capaPMTiles = protomapsL.leafletLayer({
-            url: 'data/neatogeo_Capas_optimizadas.pmtiles',
-            pane: 'pane_PMTiles_Evaluados',
-            paintRules: [
-                {
-                    dataLayer: 'neatogeo_Capas_optimizadas',
-                    symbolizer: new protomapsL.CircleSymbolizer({
-                        radius: 3,
-                        fill: '#20B2AA',
-                        stroke: '#004d40',
-                        width: 0.5,
-                        opacity: 0.8
-                    })
-                }
-            ]
-        });
-        map.addLayer(capaPMTiles);
-
-        // 2. CAPA RIESGO VOLCAMIENTO
+        // 1. RIESGO VOLCAMIENTO
         function pop_Riesgovolcamientoycadaderamas_2(feature, layer) {
             var popupContent = '<table><tr><th scope="row">Categoría Riesgo</th><td>' + 
                 (feature.properties['CATRIES_UN'] !== null ? autolinker.link(String(feature.properties['CATRIES_UN'])) : '') + '</td></tr></table>';
@@ -207,7 +182,7 @@
         });
         map.addLayer(layer_Riesgovolcamientoycadaderamas_2);
 
-        // 3. PARQUES PRIORIZADOS
+        // 2. PARQUES PRIORIZADOS
         function pop_Parquespriorizados_3(feature, layer) {
             var popupContent = '<table>\
                     <tr><th scope="row">CODIGO_ID</th><td>' + (feature.properties['CODIGO_ID'] || '') + '</td></tr>\
@@ -223,7 +198,7 @@
                 case 'Muy alto': return { pane: 'pane_Parquespriorizados_3', opacity: 1, color: 'rgba(35,35,35,0)', weight: 1, fill: true, fillOpacity: 0.8, fillColor: 'rgba(227,26,28,1.0)' };
                 case 'Alto': return { pane: 'pane_Parquespriorizados_3', opacity: 1, color: 'rgba(35,35,35,0)', weight: 1, fill: true, fillOpacity: 0.8, fillColor: 'rgba(255,127,0,1.0)' };
                 case 'Medio': return { pane: 'pane_Parquespriorizados_3', opacity: 1, color: 'rgba(35,35,35,0)', weight: 1, fill: true, fillOpacity: 0.8, fillColor: 'rgba(239,237,94,1.0)' };
-                case 'Bajo': return { pane: 'pane_Parquespriorizados_3', opacity: 1, color: 'rgba(35,35,35,0)', weight: 1, fill: true, fillOpacity: 0.8, fillColor: 'rgba(178,223,138,1.0)' };
+                case 'Bajo': return { pane: 'pane_Parquespriorizados_3', opacity: 1, color: 'rgba(178,223,138,1.0)', weight: 1, fill: true, fillOpacity: 0.8, fillColor: 'rgba(178,223,138,1.0)' };
                 case 'Muy bajo': return { pane: 'pane_Parquespriorizados_3', opacity: 1, color: 'rgba(35,35,35,0)', weight: 1, fill: true, fillOpacity: 0.8, fillColor: 'rgba(51,160,44,1.0)' };
                 default: return { pane: 'pane_Parquespriorizados_3', opacity: 1, color: 'rgba(35,35,35,0)', weight: 1, fill: true, fillOpacity: 0.8, fillColor: 'rgba(222,231,92,1.0)' };
             }
@@ -238,7 +213,7 @@
         });
         map.addLayer(layer_Parquespriorizados_3);
 
-        // 4. RED VIAL PRIORIZADA
+        // 3. RED VIAL PRIORIZADA
         function pop_Redvialpriorizada_4(feature, layer) {
             var popupContent = '<table><tr><th scope="row">CATRIES_UN</th><td>' + (feature.properties['CATRIES_UN'] || '') + '</td></tr></table>';
             layer.bindPopup(removeEmptyRowsFromPopupContent(popupContent, feature), { maxHeight: 400 });
@@ -264,7 +239,42 @@
         });
         map.addLayer(layer_Redvialpriorizada_4);
 
-        // 5. ÁRBOLES AUTORIZADOS PREVENTIVA (Sin clustering: Todos visibles en cualquier zoom)
+        // 4. ÁRBOLES EVALUADOS PREVENTIVA (PUNTO VERDE SEGÚN IMAGEN)
+        map.createPane('pane_rbolesevaluadospreventiva_5');
+        map.getPane('pane_rbolesevaluadospreventiva_5').style.zIndex = 405;
+
+        var layer_rbolesevaluadospreventiva_5;
+        if (typeof json_neatogeo_Capas_optimizadas !== 'undefined') {
+            layer_rbolesevaluadospreventiva_5 = new L.geoJson(json_neatogeo_Capas_optimizadas, {
+                pane: 'pane_rbolesevaluadospreventiva_5',
+                pointToLayer: function (feature, latlng) {
+                    return L.circleMarker(latlng, {
+                        radius: 4.0,
+                        fillColor: '#33cc33', // Verde exactamente igual a tu captura
+                        color: '#1e7b1e',
+                        weight: 1,
+                        opacity: 1,
+                        fillOpacity: 0.9
+                    });
+                }
+            });
+            map.addLayer(layer_rbolesevaluadospreventiva_5);
+        } else {
+            // Fallback por Protomaps si se monta en servidor
+            layer_rbolesevaluadospreventiva_5 = protomapsL.leafletLayer({
+                url: 'data/neatogeo_Capas_optimizadas.pmtiles',
+                pane: 'pane_rbolesevaluadospreventiva_5',
+                paintRules: [{
+                    dataLayer: 'neatogeo_Capas_optimizadas',
+                    symbolizer: new protomapsL.CircleSymbolizer({
+                        radius: 4, fillColor: '#33cc33', stroke: '#1e7b1e', width: 1, opacity: 0.9
+                    })
+                }]
+            });
+            map.addLayer(layer_rbolesevaluadospreventiva_5);
+        }
+
+        // 5. ÁRBOLES AUTORIZADOS PREVENTIVA (PUNTO AMARILLO SEGÚN IMAGEN)
         function pop_rbolesautorizadospreventiva_6(feature, layer) {
             var popupContent = '<table>\
                     <tr><th scope="row">COD_SIGAU</th><td>' + (feature.properties['COD_SIGAU'] || '') + '</td></tr>\
@@ -274,43 +284,28 @@
             layer.bindPopup(removeEmptyRowsFromPopupContent(popupContent, feature), { maxHeight: 400 });
         }
 
-        // Estilo categorizado para Árboles Autorizados
-        function style_rbolesautorizadospreventiva_6_0(feature) {
-            var cat = String(feature.properties['CAT_EVALUA']);
-            var color = '#e41a1c'; // Rojo por defecto
-            
-            if (cat.indexOf('Tratamiento') !== -1 || cat === 'Alto') color = '#e41a1c';
-            else if (cat.indexOf('Tala') !== -1 || cat === 'Muy alto') color = '#ff7f00';
-            else if (cat === 'Medio') color = '#ffff33';
-            else color = '#377eb8';
-
-            return {
-                pane: 'pane_rbolesautorizadospreventiva_6',
-                radius: 4.5,
-                opacity: 1,
-                color: '#000000',
-                weight: 0.8,
-                fill: true,
-                fillOpacity: 0.9,
-                fillColor: color
-            };
-        }
-
         map.createPane('pane_rbolesautorizadospreventiva_6');
-        map.getPane('pane_rbolesautorizadospreventiva_6').style.zIndex = 407;
+        map.getPane('pane_rbolesautorizadospreventiva_6').style.zIndex = 406;
         
         var layer_rbolesautorizadospreventiva_6 = new L.geoJson(json_rbolesautorizadospreventiva_6, {
             pane: 'pane_rbolesautorizadospreventiva_6',
             onEachFeature: pop_rbolesautorizadospreventiva_6,
             pointToLayer: function (feature, latlng) {
-                return L.circleMarker(latlng, style_rbolesautorizadospreventiva_6_0(feature));
-            },
+                return L.circleMarker(latlng, {
+                    radius: 4.5,
+                    fillColor: '#ffff00', // Amarillo exactamente igual a tu captura
+                    color: '#b2b200',
+                    weight: 1,
+                    opacity: 1,
+                    fillOpacity: 0.95
+                });
+            }
         });
         map.addLayer(layer_rbolesautorizadospreventiva_6);
 
         // 6. LÍMITE URBANO
         map.createPane('pane_Lmiteurbano_7');
-        map.getPane('pane_Lmiteurbano_7').style.zIndex = 408;
+        map.getPane('pane_Lmiteurbano_7').style.zIndex = 407;
         var layer_Lmiteurbano_7 = new L.geoJson(json_Lmiteurbano_7, {
             pane: 'pane_Lmiteurbano_7',
             interactive: false,
@@ -319,20 +314,12 @@
         map.addLayer(layer_Lmiteurbano_7);
 
         // =======================================================
-        // LEYENDA Y ESTRUCTURA DE CAPAS
+        // LEYENDA (IDÉNTICA A TU CAPTURA DE PANTALLA)
         // =======================================================
         var overlaysTree = [
             { label: '<img src="legend/Lmiteurbano_7.png" style="width:12px; height:12px;"/> Límite urbano', layer: layer_Lmiteurbano_7 },
-            { 
-                label: 'Árboles autorizados preventiva', 
-                layer: layer_rbolesautorizadospreventiva_6,
-                children: [
-                    { label: '<span class="legend-key" style="background:#e41a1c;"></span> Prioridad Alta / Tratamiento' },
-                    { label: '<span class="legend-key" style="background:#ff7f00;"></span> Intervención / Tala' },
-                    { label: '<span class="legend-key" style="background:#377eb8;"></span> Evaluación Preventiva' }
-                ]
-            },
-            { label: '<span class="legend-key" style="background:#20B2AA;"></span> Árboles Evaluados preventiva (PMTiles)', layer: capaPMTiles },
+            { label: '<span class="legend-circle" style="background:#ffff00; border: 1px solid #b2b200;"></span> <b>Árboles autorizados preventiva</b>', layer: layer_rbolesautorizadospreventiva_6 },
+            { label: '<span class="legend-circle" style="background:#33cc33; border: 1px solid #1e7b1e;"></span> <b>Árboles evaluados preventiva</b>', layer: layer_rbolesevaluadospreventiva_5 },
             { 
                 label: 'Red vial priorizada', 
                 layer: layer_Redvialpriorizada_4,
