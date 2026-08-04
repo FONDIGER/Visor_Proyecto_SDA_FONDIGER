@@ -89,10 +89,27 @@
         <script src="data/rbolesevaluadospreventiva_5.js"></script>
         <script src="data/rbolesautorizadospreventiva_6.js"></script>
         <script src="data/Lmiteurbano_7.js"></script>
+<!-- Librería para soporte de PMTiles -->
+<script src="https://unpkg.com/pmtiles@2.10.0/dist/index.js"></script>
         <script>
         var map = L.map('map', {
             zoomControl:false, maxZoom:28, minZoom:1
         }).fitBounds([[4.459562594150919,-74.365277374599],[4.83971214808472,-73.87036569117575]]);
+
+let protocol = new pmtiles.Protocol();
+    L.TileLayer.addInitHook(function() {
+        this._url = this._url ? this._url : '';
+    });
+
+    var capaPMTiles = pmtiles.leafletVectorTileLayer({
+        url: 'data/neatogeo_Capas_optimizadas.pmtiles', // <-- Ajusta el nombre de tu archivo .pmtiles
+        style: {
+            color: '#2b8cbe',
+            fillColor: '#a6bddb',
+            fillOpacity: 0.6,
+            weight: 1.5
+        }
+    }).addTo(map);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
