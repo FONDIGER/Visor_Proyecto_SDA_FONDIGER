@@ -125,6 +125,29 @@
         <script src="data/rbolesevaluadospreventiva_5.js"></script>
         <script src="data/rbolesautorizadospreventiva_6.js"></script>
         <script src="data/Lmiteurbano_7.js"></script>
+// A. Defines la capa GeoJSON normalmente (NO le pongas map.addLayer a esta)
+var layer_rbolesevaluadospreventiva_5 = new L.geoJson(typeof json_rbolesevaluadospreventiva_5 !== 'undefined' ? json_rbolesevaluadospreventiva_5 : null, {
+    pane: 'pane_rbolesevaluadospreventiva_5',
+    onEachFeature: pop_evaluados,
+    pointToLayer: function (feature, latlng) {
+        return L.circleMarker(latlng, {
+            radius: 3.5,
+            fillColor: '#33cc33',
+            color: '#1e7b1e',
+            weight: 1,
+            opacity: 1,
+            fillOpacity: 0.9
+        });
+    }
+});
+
+// B. Creas el cluster, le agregas la capa GeoJSON y AÑADES AL MAPA SOLO EL CLUSTER
+var cluster_rbolesevaluadospreventiva_5 = new L.MarkerClusterGroup({
+    showCoverageOnHover: false,
+    spiderfyOnMaxZoom: true
+});
+cluster_rbolesevaluadospreventiva_5.addLayer(layer_rbolesevaluadospreventiva_5);
+map.addLayer(cluster_rbolesevaluadospreventiva_5); // <--- SOLO ESTA SE AÑADE AL MAPA
         <script>
         var map = L.map('map', {
             zoomControl:false, maxZoom:28, minZoom:1
@@ -905,31 +928,41 @@
                 last.style.display = "none";
             }
         });
+        var baseTree = [
+            {label: "Imagen satelital", layer: layer_Imagensatelital_1},
+            {label: "OpenStreetMap", layer: layer_OpenStreetMap_0}
+        ];
+
         var overlaysTree = [
             {label: '<img src="legend/Lmiteurbano_7.png" /> Límite urbano', layer: layer_Lmiteurbano_7},
             {label: '<img src="legend/rbolesautorizadospreventiva_6.png" /> Árboles autorizados preventiva', layer: cluster_rbolesautorizadospreventiva_6},
             {label: '<img src="legend/rbolesevaluadospreventiva_5.png" /> Árboles evaluados preventiva', layer: cluster_rbolesevaluadospreventiva_5},
-            {label: 'Red vial priorizada<br /><table><tr><td style="text-align: center;"><img src="legend/Redvialpriorizada_4_Muyalto0.png" /></td><td>Muy alto</td></tr><tr><td style="text-align: center;"><img src="legend/Redvialpriorizada_4_Alto1.png" /></td><td>Alto</td></tr><tr><td style="text-align: center;"><img src="legend/Redvialpriorizada_4_Medio2.png" /></td><td>Medio</td></tr><tr><td style="text-align: center;"><img src="legend/Redvialpriorizada_4_Bajo3.png" /></td><td>Bajo</td></tr><tr><td style="text-align: center;"><img src="legend/Redvialpriorizada_4_Muybajo4.png" /></td><td>Muy bajo</td></tr><tr><td style="text-align: center;"><img src="legend/Redvialpriorizada_4_5.png" /></td><td></td></tr></table>', layer: layer_Redvialpriorizada_4},
-            {label: 'Parques priorizados<br /><table><tr><td style="text-align: center;"><img src="legend/Parquespriorizados_3_Muyalto0.png" /></td><td>Muy alto</td></tr><tr><td style="text-align: center;"><img src="legend/Parquespriorizados_3_Alto1.png" /></td><td>Alto</td></tr><tr><td style="text-align: center;"><img src="legend/Parquespriorizados_3_Medio2.png" /></td><td>Medio</td></tr><tr><td style="text-align: center;"><img src="legend/Parquespriorizados_3_Bajo3.png" /></td><td>Bajo</td></tr><tr><td style="text-align: center;"><img src="legend/Parquespriorizados_3_Muybajo4.png" /></td><td>Muy bajo</td></tr><tr><td style="text-align: center;"><img src="legend/Parquespriorizados_3_5.png" /></td><td></td></tr></table>', layer: layer_Parquespriorizados_3},
-            {label: 'Riesgo volcamiento y caÍda de ramas<br /><table><tr><td style="text-align: center;"><img src="legend/Riesgovolcamientoycadaderamas_2_Muyalto0.png" /></td><td>Muy alto</td></tr><tr><td style="text-align: center;"><img src="legend/Riesgovolcamientoycadaderamas_2_Alto1.png" /></td><td>Alto</td></tr><tr><td style="text-align: center;"><img src="legend/Riesgovolcamientoycadaderamas_2_Medio2.png" /></td><td>Medio</td></tr><tr><td style="text-align: center;"><img src="legend/Riesgovolcamientoycadaderamas_2_Bajo3.png" /></td><td>Bajo</td></tr><tr><td style="text-align: center;"><img src="legend/Riesgovolcamientoycadaderamas_2_Muybajo4.png" /></td><td>Muy bajo</td></tr><tr><td style="text-align: center;"><img src="legend/Riesgovolcamientoycadaderamas_2_5.png" /></td><td></td></tr></table>', layer: layer_Riesgovolcamientoycadaderamas_2},
-            {label: "Imagen satelital", layer: layer_Imagensatelital_1, radioGroup: 'bm' },
-            {label: "OpenStreetMap", layer: layer_OpenStreetMap_0, radioGroup: 'bm' },]
-        var lay = L.control.layers.tree(null, overlaysTree,{
-            //namedToggle: true,
-            //selectorBack: false,
-            //closedSymbol: '&#8862; &#x1f5c0;',
-            //openedSymbol: '&#8863; &#x1f5c1;',
-            //collapseAll: 'Collapse all',
-            //expandAll: 'Expand all',
+            {label: 'Red vial priorizada<br /><table><tr><td style="text-align: center;"><img src="legend/Redvialpriorizada_4_Muyalto0.png" /></td><td>Muy alto</td></tr><tr><td style="text-align: center;"><img src="legend/Redvialpriorizada_4_Alto1.png" /></td><td>Alto</td></tr><tr><td style="text-align: center;"><img src="legend/Redvialpriorizada_4_Medio2.png" /></td><td>Medio</td></tr><tr><td style="text-align: center;"><img src="legend/Redvialpriorizada_4_Bajo3.png" /></td><td>Bajo</td></tr><tr><td style="text-align: center;"><img src="legend/Redvialpriorizada_4_Muybajo4.png" /></td><td>Muy bajo</td></tr><tr><td style="text-align: center;"><img src="legend/Redvialpriorizada_4_5.png" /></td><td>Sin categoría</td></tr></table>', layer: layer_Redvialpriorizada_4},
+            {label: 'Parques priorizados<br /><table><tr><td style="text-align: center;"><img src="legend/Parquespriorizados_3_Muyalto0.png" /></td><td>Muy alto</td></tr><tr><td style="text-align: center;"><img src="legend/Parquespriorizados_3_Alto1.png" /></td><td>Alto</td></tr><tr><td style="text-align: center;"><img src="legend/Parquespriorizados_3_Medio2.png" /></td><td>Medio</td></tr><tr><td style="text-align: center;"><img src="legend/Parquespriorizados_3_Bajo3.png" /></td><td>Bajo</td></tr><tr><td style="text-align: center;"><img src="legend/Parquespriorizados_3_Muybajo4.png" /></td><td>Muy bajo</td></tr><tr><td style="text-align: center;"><img src="legend/Parquespriorizados_3_5.png" /></td><td>Sin categoría</td></tr></table>', layer: layer_Parquespriorizados_3},
+            {label: 'Riesgo volcamiento y caída de ramas<br /><table><tr><td style="text-align: center;"><img src="legend/Riesgovolcamientoycadaderamas_2_Muyalto0.png" /></td><td>Muy alto</td></tr><tr><td style="text-align: center;"><img src="legend/Riesgovolcamientoycadaderamas_2_Alto1.png" /></td><td>Alto</td></tr><tr><td style="text-align: center;"><img src="legend/Riesgovolcamientoycadaderamas_2_Medio2.png" /></td><td>Medio</td></tr><tr><td style="text-align: center;"><img src="legend/Riesgovolcamientoycadaderamas_2_Bajo3.png" /></td><td>Bajo</td></tr><tr><td style="text-align: center;"><img src="legend/Riesgovolcamientoycadaderamas_2_Muybajo4.png" /></td><td>Muy bajo</td></tr><tr><td style="text-align: center;"><img src="legend/Riesgovolcamientoycadaderamas_2_5.png" /></td><td>Sin categoría</td></tr></table>', layer: layer_Riesgovolcamientoycadaderamas_2}
+        ];
+
+        var lay = L.control.layers.tree(baseTree, overlaysTree, {
+            // namedToggle: true,
+            // selectorBack: false,
+            // closedSymbol: '&#8862; &#x1f5c0;',
+            // openedSymbol: '&#8863; &#x1f5c1;',
+            // collapseAll: 'Collapse all',
+            // expandAll: 'Expand all',
             collapsed: true,
         });
         lay.addTo(map);
+
         setBounds();
+
+        // Control de búsqueda por COD_SIGAU en la capa no agrupada
         map.addControl(new L.Control.Search({
             layer: layer_rbolesevaluadospreventiva_5,
             initial: false,
             hideMarkerOnCollapse: true,
-            propertyName: 'COD_SIGAU'}));
+            propertyName: 'COD_SIGAU'
+        }));
+
         if (typeof url === 'undefined') {
             document.getElementsByClassName('search-button')[0].className += ' fa fa-binoculars';
         } else {
