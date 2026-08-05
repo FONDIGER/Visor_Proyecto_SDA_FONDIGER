@@ -144,7 +144,8 @@ var layer_rbolesevaluadospreventiva_5 = new L.geoJson(typeof json_rbolesevaluado
 // B. Creas el cluster, le agregas la capa GeoJSON y AÑADES AL MAPA SOLO EL CLUSTER
 var cluster_rbolesevaluadospreventiva_5 = new L.MarkerClusterGroup({
     showCoverageOnHover: false,
-    spiderfyOnMaxZoom: true
+    spiderfyOnMaxZoom: true,
+maxClusterRadius: 30
 });
 cluster_rbolesevaluadospreventiva_5.addLayer(layer_rbolesevaluadospreventiva_5);
 map.addLayer(cluster_rbolesevaluadospreventiva_5); // <--- SOLO ESTA SE AÑADE AL MAPA
@@ -827,6 +828,8 @@ map.addLayer(cluster_rbolesevaluadospreventiva_5); // <--- SOLO ESTA SE AÑADE A
             },
         });
         var cluster_rbolesautorizadospreventiva_6 = new L.MarkerClusterGroup({showCoverageOnHover: false,
+spiderfyOnMaxZoom: true,
+    maxClusterRadius: 30
             spiderfyDistanceMultiplier: 2});
         cluster_rbolesautorizadospreventiva_6.addLayer(layer_rbolesautorizadospreventiva_6);
 
