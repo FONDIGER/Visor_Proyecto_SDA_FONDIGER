@@ -968,20 +968,7 @@ disableClusteringAtZoom: 15,
 
         setBounds();
 
-        // 2. Buscador apuntando directamente al clúster (aquí va tu código)
-        map.addControl(new L.Control.Search({
-            layer: cluster_rbolesevaluadospreventiva_5,
-            initial: false,
-            hideMarkerOnCollapse: true,
-            propertyName: 'COD_SIGAU'
-        }));
 
-        // 3. Asignación del icono de prismáticos al botón de búsqueda
-        if (typeof url === 'undefined') {
-            document.getElementsByClassName('search-button')[0].className += ' fa fa-binoculars';
-        } else {
-            document.getElementsByClassName('search-button')[1].className += ' fa fa-binoculars';
-        }
         </script>        
     </body>
 </html>
