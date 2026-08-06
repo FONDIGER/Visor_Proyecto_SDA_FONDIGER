@@ -146,7 +146,7 @@ var cluster_rbolesevaluadospreventiva_5 = new L.MarkerClusterGroup({
     showCoverageOnHover: false,
     spiderfyOnMaxZoom: true,
 maxClusterRadius: 10,
-spiderfyDistanceMultiplier: 1,
+spiderfyDistanceMultiplier: 2,
 disableClusteringAtZoom: 11, 
 });
 cluster_rbolesevaluadospreventiva_5.addLayer(layer_rbolesevaluadospreventiva_5);
@@ -155,7 +155,6 @@ map.addLayer(cluster_rbolesevaluadospreventiva_5); // <--- SOLO ESTA SE AÑADE A
         var map = L.map('map', {
             zoomControl:false, maxZoom:28, minZoom:1
         }).fitBounds([[4.459562594150919,-74.365277374599],[4.83971214808472,-73.87036569117575]]);
-
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
@@ -834,7 +833,7 @@ map.addLayer(cluster_rbolesevaluadospreventiva_5); // <--- SOLO ESTA SE AÑADE A
 spiderfyOnMaxZoom: true,
     maxClusterRadius: 30,
 disableClusteringAtZoom: 15, 
-            spiderfyDistanceMultiplier: 1});
+            spiderfyDistanceMultiplier: 2});
         cluster_rbolesautorizadospreventiva_6.addLayer(layer_rbolesautorizadospreventiva_6);
 
         bounds_group.addLayer(layer_rbolesautorizadospreventiva_6);
