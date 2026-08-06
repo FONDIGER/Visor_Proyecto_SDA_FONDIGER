@@ -947,6 +947,20 @@ chunkedLoading: true});
             {label: 'Parques priorizados<br /><table><tr><td style="text-align: center;"><img src="legend/Parquespriorizados_3_Muyalto0.png" /></td><td>Muy alto</td></tr><tr><td style="text-align: center;"><img src="legend/Parquespriorizados_3_Alto1.png" /></td><td>Alto</td></tr><tr><td style="text-align: center;"><img src="legend/Parquespriorizados_3_Medio2.png" /></td><td>Medio</td></tr><tr><td style="text-align: center;"><img src="legend/Parquespriorizados_3_Bajo3.png" /></td><td>Bajo</td></tr><tr><td style="text-align: center;"><img src="legend/Parquespriorizados_3_Muybajo4.png" /></td><td>Muy bajo</td></tr><tr><td style="text-align: center;"><img src="legend/Parquespriorizados_3_5.png" /></td><td>Sin categoría</td></tr></table>', layer: layer_Parquespriorizados_3},
             {label: 'Riesgo volcamiento y caída de ramas<br /><table><tr><td style="text-align: center;"><img src="legend/Riesgovolcamientoycadaderamas_2_Muyalto0.png" /></td><td>Muy alto</td></tr><tr><td style="text-align: center;"><img src="legend/Riesgovolcamientoycadaderamas_2_Alto1.png" /></td><td>Alto</td></tr><tr><td style="text-align: center;"><img src="legend/Riesgovolcamientoycadaderamas_2_Medio2.png" /></td><td>Medio</td></tr><tr><td style="text-align: center;"><img src="legend/Riesgovolcamientoycadaderamas_2_Bajo3.png" /></td><td>Bajo</td></tr><tr><td style="text-align: center;"><img src="legend/Riesgovolcamientoycadaderamas_2_Muybajo4.png" /></td><td>Muy bajo</td></tr><tr><td style="text-align: center;"><img src="legend/Riesgovolcamientoycadaderamas_2_5.png" /></td><td>Sin categoría</td></tr></table>', layer: layer_Riesgovolcamientoycadaderamas_2}
         ];
+        // 2. Buscador apuntando directamente al clúster (aquí va tu código)
+        map.addControl(new L.Control.Search({
+            layer: cluster_rbolesevaluadospreventiva_5,
+            initial: false,
+            hideMarkerOnCollapse: true,
+            propertyName: 'COD_SIGAU'
+        }));
+
+        // 3. Asignación del icono de prismáticos al botón de búsqueda
+        if (typeof url === 'undefined') {
+            document.getElementsByClassName('search-button')[0].className += ' fa fa-binoculars';
+        } else {
+            document.getElementsByClassName('search-button')[1].className += ' fa fa-binoculars';
+        }
 
         var lay = L.control.layers.tree(baseTree, overlaysTree, {
             // namedToggle: true,
