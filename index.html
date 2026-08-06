@@ -141,23 +141,6 @@ var layer_rbolesevaluadospreventiva_5 = new L.geoJson(typeof json_rbolesevaluado
     }
 });
 
-// B. Creas el cluster, le agregas la capa GeoJSON y AÑADES AL MAPA SOLO EL CLUSTER
-
-// 1. Declaración con optimización de carga para grandes volúmenes de puntos
-var cluster_rbolesevaluadospreventiva_5 = new L.MarkerClusterGroup({
-    showCoverageOnHover: false,
-    spiderfyOnMaxZoom: true,
-    spiderfyDistanceMultiplier: 2,
-    maxClusterRadius: 15,           // Mismo radio que el de autorizados (30px)
-    disableClusteringAtZoom: 13,    // Igualado a la capa de autorizados
-    chunkedLoading: true,           // OBLIGATORIO: Permite renderizar miles de árboles sin bloquear el visor
-    chunkInterval: 100
-});
-
-// 2. Limpiar vinculación previa y añadir solo el clúster
-cluster_rbolesevaluadospreventiva_5.addLayer(layer_rbolesevaluadospreventiva_5);
-map.addLayer(cluster_rbolesevaluadospreventiva_5);
-
         <script>
         var map = L.map('map', {
             zoomControl:false, maxZoom:28, minZoom:1
@@ -756,8 +739,8 @@ var cluster_rbolesevaluadospreventiva_5 = new L.MarkerClusterGroup({
     showCoverageOnHover: false,
     spiderfyOnMaxZoom: true,
     spiderfyDistanceMultiplier: 2,
-    maxClusterRadius: 15,          // Radio pequeño para disolver fácil
-    disableClusteringAtZoom: 13,   // A zoom 13 (nivel Simón Bolívar/barrio) quita los globos
+    maxClusterRadius: 30,          // Radio pequeño para disolver fácil
+    disableClusteringAtZoom: 15,   // A zoom 13 (nivel Simón Bolívar/barrio) quita los globos
     chunkedLoading: true
 });
 
@@ -849,7 +832,8 @@ cluster_rbolesevaluadospreventiva_5.addLayer(layer_rbolesevaluadospreventiva_5);
 spiderfyOnMaxZoom: true,
     maxClusterRadius: 30,
 disableClusteringAtZoom: 15, 
-            spiderfyDistanceMultiplier: 2});
+            spiderfyDistanceMultiplier: 2,
+chunkedLoading: true});
         cluster_rbolesautorizadospreventiva_6.addLayer(layer_rbolesautorizadospreventiva_6);
 
         bounds_group.addLayer(layer_rbolesautorizadospreventiva_6);
