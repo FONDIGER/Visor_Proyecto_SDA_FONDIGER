@@ -142,15 +142,22 @@ var layer_rbolesevaluadospreventiva_5 = new L.geoJson(typeof json_rbolesevaluado
 });
 
 // B. Creas el cluster, le agregas la capa GeoJSON y AÑADES AL MAPA SOLO EL CLUSTER
+
+// 1. Declaración con optimización de carga para grandes volúmenes de puntos
 var cluster_rbolesevaluadospreventiva_5 = new L.MarkerClusterGroup({
     showCoverageOnHover: false,
     spiderfyOnMaxZoom: true,
-maxClusterRadius: 10,
-spiderfyDistanceMultiplier: 2,
-disableClusteringAtZoom: 11, 
+    spiderfyDistanceMultiplier: 2,
+    maxClusterRadius: 30,           // Mismo radio que el de autorizados (30px)
+    disableClusteringAtZoom: 15,    // Igualado a la capa de autorizados
+    chunkedLoading: true,           // OBLIGATORIO: Permite renderizar miles de árboles sin bloquear el visor
+    chunkInterval: 100
 });
+
+// 2. Limpiar vinculación previa y añadir solo el clúster
 cluster_rbolesevaluadospreventiva_5.addLayer(layer_rbolesevaluadospreventiva_5);
-map.addLayer(cluster_rbolesevaluadospreventiva_5); // <--- SOLO ESTA SE AÑADE AL MAPA
+map.addLayer(cluster_rbolesevaluadospreventiva_5);
+
         <script>
         var map = L.map('map', {
             zoomControl:false, maxZoom:28, minZoom:1
@@ -961,14 +968,23 @@ disableClusteringAtZoom: 15,
 
         setBounds();
 
-       // Buscador apuntando directamente al clúster
-map.addControl(new L.Control.Search({
-    layer: cluster_rbolesevaluadospreventiva_5,
-    initial: false,
-    hideMarkerOnCollapse: true,
-    propertyName: 'COD_SIGAU'
-}));
+       // 1. Instanciar el control de capas
+        var lay = L.control.layers.tree(baseTree, overlaysTree, {
+            collapsed: true,
+        });
+        lay.addTo(map);
 
+        setBounds();
+
+        // 2. Buscador apuntando directamente al clúster (aquí va tu código)
+        map.addControl(new L.Control.Search({
+            layer: cluster_rbolesevaluadospreventiva_5,
+            initial: false,
+            hideMarkerOnCollapse: true,
+            propertyName: 'COD_SIGAU'
+        }));
+
+        // 3. Asignación del icono de prismáticos al botón de búsqueda
         if (typeof url === 'undefined') {
             document.getElementsByClassName('search-button')[0].className += ' fa fa-binoculars';
         } else {
