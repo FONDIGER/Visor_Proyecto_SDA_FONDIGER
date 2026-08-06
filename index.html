@@ -968,14 +968,6 @@ disableClusteringAtZoom: 15,
 
         setBounds();
 
-       // 1. Instanciar el control de capas
-        var lay = L.control.layers.tree(baseTree, overlaysTree, {
-            collapsed: true,
-        });
-        lay.addTo(map);
-
-        setBounds();
-
         // 2. Buscador apuntando directamente al clúster (aquí va tu código)
         map.addControl(new L.Control.Search({
             layer: cluster_rbolesevaluadospreventiva_5,
